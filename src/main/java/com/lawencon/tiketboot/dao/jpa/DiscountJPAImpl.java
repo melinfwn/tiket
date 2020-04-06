@@ -49,13 +49,10 @@ public class DiscountJPAImpl implements DiscountDao {
 	}
 
 	@Override
-	public Integer getDiscount(String kode){
+	public Integer getDiscount(String kode) {
 		List<Discount> list = discountRepo.findPotonganHargaByKodeVoucher(kode);
-		if (list.get(0) != null) {
-			Integer potongan = list.get(0).getPotonganHarga();
-			return potongan;
-		}
-		return null;
+		Integer potongan = list.get(0).getPotonganHarga();
+		return potongan;
 	}
 
 }

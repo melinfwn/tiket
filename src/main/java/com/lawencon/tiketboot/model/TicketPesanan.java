@@ -22,6 +22,7 @@ public class TicketPesanan {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
 	private Date tglBerangkat;
 	private String kursi;
+	private Integer harga;
 	
 
 	@ManyToOne
@@ -78,6 +79,14 @@ public class TicketPesanan {
 
 	public void setType(TypeTicket type) {
 		this.type = type;
+	}
+
+	public Integer getHarga() {
+		return harga;
+	}
+
+	public void setHarga(Integer harga) {
+		this.harga = harga;
 	}
 
 }

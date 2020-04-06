@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.tiketboot.model.TicketPesanan;
 import com.lawencon.tiketboot.model.TransactionTicket;
 import com.lawencon.tiketboot.service.TicketTransactionService;
 
 @RestController
-public class TicketTransactionController extends BaseController {
+public class TicketTransactionController extends BaseController<TransactionTicket> {
 
 	@Autowired
 	private TicketTransactionService transactionService;
@@ -26,12 +25,12 @@ public class TicketTransactionController extends BaseController {
 
 	@PostMapping("transaction/insert")
 	public ResponseEntity<TransactionTicket> insertTransTiket(@RequestBody String content,
-			@RequestHeader("Authorization") String authorization, @RequestParam("kode") String kodeDiskon) {
+			@RequestHeader("Authorization") String authorization) {
 		TransactionTicket trans = new TransactionTicket();
 		try {
-			trans = new ObjectMapper().readValue(content, TransactionTicket.class);
+			trans = super.readValue(content, TransactionTicket.class);
 			authArr = super.authUser(authorization);
-			transactionService.insertTransTicket(trans, authArr[0], authArr[1], kodeDiskon);
+			transactionService.insertTransTicket(trans, authArr[0], authArr[1]);
 			return new ResponseEntity<>(trans, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -12,6 +12,7 @@ import com.lawencon.tiketboot.dao.TicketDao;
 import com.lawencon.tiketboot.dao.TransactionDao;
 import com.lawencon.tiketboot.dao.TypeDao;
 import com.lawencon.tiketboot.model.Customer;
+import com.lawencon.tiketboot.model.Discount;
 import com.lawencon.tiketboot.model.TicketPesanan;
 import com.lawencon.tiketboot.model.Transaction;
 import com.lawencon.tiketboot.model.TransactionTicket;
@@ -41,8 +42,6 @@ public class TicketTransactionImpl implements TicketTransactionService {
 	@Qualifier("discount_repo_jpa")
 	private DiscountDao discountDao;
 
-	
-
 	private Boolean checkCustomer(String username, String password) throws Exception {
 		List<Customer> list = new ArrayList<>();
 		list = customerDao.findByUsernamePassword(username, password);
@@ -51,7 +50,15 @@ public class TicketTransactionImpl implements TicketTransactionService {
 		}
 		return false;
 	}
-	
+
+	private Integer checkDiscount(String kode) {
+		Integer diskon = discountDao.getDiscount(kode);
+		if (diskon != 0) {
+			return diskon;
+		}
+		return 0;
+	}
+
 	@Override
 	public TicketPesanan insert(TicketPesanan ticket) {
 		return ticketDao.insert(ticket);
@@ -60,7 +67,7 @@ public class TicketTransactionImpl implements TicketTransactionService {
 	@Override
 	public List<TicketPesanan> findAll(String username, String password) {
 		try {
-			if (checkCustomer(username, password)==true) {
+			if (checkCustomer(username, password) == true) {
 				return ticketDao.findAll();
 			}
 		} catch (Exception e) {
@@ -70,9 +77,9 @@ public class TicketTransactionImpl implements TicketTransactionService {
 	}
 
 	@Override
-	public List<TicketPesanan> findById(Long id,String username, String password) {
+	public List<TicketPesanan> findById(Long id, String username, String password) {
 		try {
-			if (checkCustomer(username, password)==true) {
+			if (checkCustomer(username, password) == true) {
 				return ticketDao.findById(id);
 			}
 		} catch (Exception e) {
@@ -82,8 +89,8 @@ public class TicketTransactionImpl implements TicketTransactionService {
 	}
 
 	@Override
-	public TransactionTicket insertTransTicket(TransactionTicket trans, String username, String password,
-			String kodeDiskon) {
+	public TransactionTicket insertTransTicket(TransactionTicket trans, String username, String password)
+			throws Exception {
 		try {
 			if (checkCustomer(username, password) == true) {
 				Transaction t = trans.getTransaction();
@@ -94,6 +101,8 @@ public class TicketTransactionImpl implements TicketTransactionService {
 				customer.setUsername(cust.get(0).getUsername());
 				customer.setPassword(cust.get(0).getPassword());
 				t.setCustomer(customer);
+				Discount discount = discountDao.findByKodeVoucher(trans.getDiscount().getKodeVoucher());
+				trans.setDiscount(discount);
 				transactionService.insert(t);
 				trans.getTicket().forEach(x -> {
 					TicketPesanan ticket = x;
@@ -104,10 +113,14 @@ public class TicketTransactionImpl implements TicketTransactionService {
 					type1.setId(list2.get(0).getId());
 					type1.setNama(list2.get(0).getNama());
 					type1.setKategori(list2.get(0).getKategori());
-					type1.setHarga(list2.get(0).getHarga()- discountDao.getDiscount(kodeDiskon));
+					type1.setHarga(list2.get(0).getHarga());
 					ticket.setType(type1);
+					if (discount != null) {
+						ticket.setHarga(list2.get(0).getHarga() - checkDiscount(trans.getDiscount().getKodeVoucher()));
+					} else {
+						ticket.setHarga(list2.get(0).getHarga());
+					}
 					ticketDao.insert(ticket);
-				
 
 				});
 			}

@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.tiketboot.model.Discount;
 import com.lawencon.tiketboot.service.DiscountService;
 @RestController
-public class DiscountController extends BaseController {
+public class DiscountController extends BaseController<Discount> {
 
 	@Autowired
 	private DiscountService discountService;
@@ -24,7 +23,7 @@ public class DiscountController extends BaseController {
 	@PostMapping("discount/insert")
 	public ResponseEntity<Discount> insertDiscount(@RequestBody String content) {
 		try {
-			discount = new ObjectMapper().readValue(content, Discount.class);
+			discount =super.readValue(content, Discount.class);
 			discountService.insert(discount);
 			return new ResponseEntity<>(discount, HttpStatus.OK);
 		} catch (Exception e) {
@@ -36,7 +35,7 @@ public class DiscountController extends BaseController {
 	@PostMapping("discount/update")
 	public ResponseEntity<Discount> updateDiscount(@RequestParam("id") Long id, @RequestBody String content) {
 		try {
-			discount = new ObjectMapper().readValue(content, Discount.class);
+			discount = super.readValue(content, Discount.class);
 			discountService.update(id, discount.getKodeVoucher(), discount.getPotonganHarga());
 			return new ResponseEntity<>(discount, HttpStatus.OK);
 		} catch (Exception e) {

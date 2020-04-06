@@ -2,7 +2,6 @@ package com.lawencon.tiketboot.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.tiketboot.model.TypeTicket;
 import com.lawencon.tiketboot.service.TypeService;
 
 @RestController
-public class TypeController extends BaseController {
+public class TypeController extends BaseController<TypeTicket> {
 
 	@Autowired
 	private TypeService typeService;
@@ -28,7 +26,7 @@ public class TypeController extends BaseController {
 	@PostMapping("type/insert")
 	public ResponseEntity<TypeTicket> insertType(@RequestBody String content) {
 		try {
-			type = new ObjectMapper().readValue(content, TypeTicket.class);
+			type = super.readValue(content, TypeTicket.class);
 			typeService.insertType(type);
 			return new ResponseEntity<>(type, HttpStatus.OK);
 		} catch (Exception e) {
@@ -40,7 +38,7 @@ public class TypeController extends BaseController {
 	@PostMapping("type/update")
 	public ResponseEntity<TypeTicket> updateType(@RequestParam("id") Long id,@RequestBody String content){
 		try {
-			type = new ObjectMapper().readValue(content, TypeTicket.class);
+			type = super.readValue(content, TypeTicket.class);
 			typeService.updateType(id, type.getNama(), type.getHarga(), type.getKategori());
 			return new ResponseEntity<>(type,HttpStatus.OK);
 		} catch (Exception e) {

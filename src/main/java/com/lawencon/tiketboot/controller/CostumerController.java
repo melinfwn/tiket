@@ -10,12 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.tiketboot.model.Customer;
 import com.lawencon.tiketboot.service.CustomerService;
 
 @RestController
-public class CostumerController extends BaseController {
+public class CostumerController extends BaseController<Customer> {
 
 	@Autowired
 	private CustomerService customerService;
@@ -26,7 +25,7 @@ public class CostumerController extends BaseController {
 	@PostMapping("customer/insert")
 	public ResponseEntity<Customer> insertCustomer(@RequestBody String content) {
 		try {
-			customer = new ObjectMapper().readValue(content, Customer.class);
+			customer = super.readValue(content, Customer.class);
 			customerService.insert(customer);
 			return new ResponseEntity<>(customer, HttpStatus.OK);
 		} catch (Exception e) {
@@ -38,7 +37,7 @@ public class CostumerController extends BaseController {
 	@PostMapping("customer/update")
 	public ResponseEntity<Customer> updateCustomer(@RequestParam("id") Long id, @RequestBody String content) {
 		try {
-			customer = new ObjectMapper().readValue(content, Customer.class);
+			customer = super.readValue(content, Customer.class);
 			customerService.update(id, customer);
 			return new ResponseEntity<>(customer, HttpStatus.OK);
 		} catch (Exception e) {

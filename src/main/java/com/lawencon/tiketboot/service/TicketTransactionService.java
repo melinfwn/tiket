@@ -6,7 +6,7 @@ import com.lawencon.tiketboot.model.TicketPesanan;
 import com.lawencon.tiketboot.model.TransactionTicket;
 
 public interface TicketTransactionService {
-	abstract TransactionTicket insertTransTicket(TransactionTicket trans, String username, String password,String kodeDiskon)
+	abstract TransactionTicket insertTransTicket(TransactionTicket trans, String username, String password)
 			throws Exception;
 	abstract TicketPesanan insert(TicketPesanan ticket);
 
